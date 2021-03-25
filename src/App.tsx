@@ -1,20 +1,10 @@
-import React, {FormEvent, useState} from 'react';
+import React from 'react';
 import './App.css';
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CircularProgress,
-    Container,
-    CssBaseline,
-    List,
-    ListItem,
-    ListSubheader,
-    TextField
-} from "@material-ui/core";
+import {AppBar, Box, Button, CircularProgress, Container, CssBaseline, Toolbar, Typography} from "@material-ui/core";
 import {useBeacon, UseBeaconState} from './features/wallet/useBeacon';
+import {BeaconProvider, useBeaconClient} from "./runtime/BeaconProvider";
+import WalletInfo from "./features/wallet/WalletInfo";
+import SignatureForm from "./features/wallet/SignatureForm";
 
 function connectWallet(beacon: { state: UseBeaconState; connect: () => Promise<void> }) {
     if (beacon.state.wallet == null)
@@ -37,59 +27,40 @@ function connectWallet(beacon: { state: UseBeaconState; connect: () => Promise<v
 }
 
 function App() {
-    const beacon = useBeacon();
-    const [payload, setPayload] = useState<string>();
-
-    const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
-        payload && beacon.sign(payload);
-        evt.preventDefault();
-    }
+    const dapp = useBeaconClient();
+    const beacon = useBeacon(dapp);
 
     return (
-        <Box>
+        <BeaconProvider>
             <CssBaseline/>
             <Container maxWidth="md">
-                <Card>
-                    <CardHeader
-                        title="Basic Multisig helper"
-                        action={connectWallet(beacon)}
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6">
+                            Simple multisig helper
+                        </Typography>
+                        {connectWallet(beacon)}
+                    </Toolbar>
+                </AppBar>
+                <Box mt={5}>
+                    {beacon.state.wallet &&
+                    <WalletInfo
+                        address={beacon.state.wallet.address}
+                        publicKey={beacon.state.wallet.publicKey}
                     />
+                    }
+                </Box>
+                <Box mt={5}>
+                    {beacon.state.wallet &&
+                    <SignatureForm
+                        onSubmit={v => beacon.sign(v)}
+                        signature={beacon.state.signature}
+                    />
+                    }
+                </Box>
 
-                    <CardContent>
-                        {beacon.state.wallet &&
-                        <Box>
-                            <List>
-                                <ListSubheader>
-                                    Address
-                                </ListSubheader>
-                                <ListItem>
-                                    {beacon.state.wallet.address}
-                                </ListItem>
-                                <ListSubheader>
-                                    Public key
-                                </ListSubheader>
-                                <ListItem>
-                                    {beacon.state.wallet.publicKey}
-                                </ListItem>
-                                <ListSubheader>
-                                    Signature
-                                </ListSubheader>
-                                <ListItem>
-                                    {beacon.state.signature}
-                                </ListItem>
-                            </List>
-                            <form onSubmit={handleSubmit}>
-                                <TextField id="standard-basic" label="Payload" value={payload}
-                                           onChange={(e) => setPayload(e.target.value)}/>
-                                <Button color="primary" variant="contained" type="submit" value="Submit">Signer</Button>
-                            </form>
-                        </Box>
-
-                        }
-                    </CardContent>
-                </Card>
             </Container>
-        </Box>
+        </BeaconProvider>
     );
 }
 

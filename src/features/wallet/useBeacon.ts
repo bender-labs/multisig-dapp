@@ -1,4 +1,4 @@
-import {DAppClient, SigningType} from '@airgap/beacon-sdk'
+import {DAppClient, NetworkType, PermissionScope, SigningType} from '@airgap/beacon-sdk'
 import {useState} from "react";
 
 type WalletInfo = {
@@ -12,14 +12,17 @@ export type UseBeaconState = {
     signature?: string
 }
 
-const client = new DAppClient({name: 'Basic Multisig helper'});
-
-export function useBeacon() {
+export function useBeacon(client: DAppClient) {
     const [state, setState] = useState<UseBeaconState>({loading: false});
 
     const connect = async () => {
         setState({...state, loading: true});
-        const response = await client.requestPermissions();
+        const response = await client.requestPermissions({
+            network: {
+                type: NetworkType.MAINNET,
+            },
+            scopes: [PermissionScope.SIGN]
+        });
         const info = {publicKey: response.publicKey, address: response.address};
         setState({loading: false, wallet: info});
     };
