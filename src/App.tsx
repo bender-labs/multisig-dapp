@@ -6,7 +6,7 @@ import {BeaconProvider, useBeaconClient} from "./runtime/BeaconProvider";
 import WalletInfo from "./features/wallet/WalletInfo";
 import SignatureForm from "./features/wallet/SignatureForm";
 
-function connectWallet(beacon: { state: UseBeaconState; connect: () => Promise<void> }) {
+function connectWallet(beacon: { state: UseBeaconState; connect: () => Promise<void>; disconnect: () => Promise<void> }) {
     if (beacon.state.wallet == null)
         return (
             <Box>
@@ -23,7 +23,8 @@ function connectWallet(beacon: { state: UseBeaconState; connect: () => Promise<v
     if (beacon.state.loading) {
         return (<Button variant="contained" disabled={true}>Loading</Button>)
     }
-    return (<Button disabled={true}>Connected</Button>)
+    return (<Button variant="contained" color={"secondary"} onClick={beacon.disconnect}
+                    disabled={beacon.state.loading}>Disconnect</Button>)
 }
 
 function App() {
@@ -52,10 +53,15 @@ function App() {
                 </Box>
                 <Box mt={5}>
                     {beacon.state.wallet &&
-                    <SignatureForm
-                        onSubmit={v => beacon.sign(v)}
-                        signature={beacon.state.signature}
-                    />
+                    <>
+                        <SignatureForm
+                            onValidate={v => beacon.validate(v)}
+                            onSubmit={beacon.sign}
+                            onReset={beacon.reset}
+                            micheline={beacon.state.micheline}
+                            signature={beacon.state.signature}
+                        />
+                    </>
                     }
                 </Box>
 

@@ -8,55 +8,87 @@ import {
     List,
     ListItem,
     ListSubheader,
-    TextField
+    TextField,
+    Typography
 } from "@material-ui/core";
 import React, {FormEvent, useState} from "react";
+import {emitMicheline, Expr} from "@taquito/michel-codec";
 
 export type SignatureFormProps = {
-    onSubmit: (p: string) => Promise<any>
+    onValidate: (p: string) => void
+    onSubmit: () => Promise<void>
+    onReset: () => void
+    micheline?: Expr
     signature?: string
 };
 
-function Render({onSubmit, signature}: SignatureFormProps) {
+function Render({onSubmit, signature, onValidate, micheline, onReset}: SignatureFormProps) {
     const [payload, setPayload] = useState("");
 
-    const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    const handleValidate = (evt: FormEvent<HTMLButtonElement>) => {
         evt.preventDefault();
-        payload && onSubmit(payload);
-
+        payload && onValidate(payload);
     }
+    const handleSubmit = (evt: FormEvent<HTMLButtonElement>) => {
+        evt.preventDefault();
+        payload && onSubmit();
+    }
+
+    const handleReset = (evt: FormEvent<HTMLButtonElement>) => {
+        evt.preventDefault();
+        setPayload("");
+        onReset();
+    }
+
     return (
         <Card>
             <CardHeader
                 title="Sign"
             />
-            <form onSubmit={handleSubmit}>
-                <CardContent>
-                    <Box>
-                        <TextField
-                            id="standard-basic"
-                            label="Payload"
-                            multiline
-                            fullWidth
-                            value={payload}
-                            onChange={e => setPayload(e.target.value)}/>
-                        {signature &&
-                        <List>
-                            <ListSubheader>
-                                Signature
-                            </ListSubheader>
-                            <ListItem>
-                                {signature}
-                            </ListItem>
-                        </List>
-                        }
-                    </Box>
-                </CardContent>
-                <CardActions>
-                    <Button color="primary" variant="contained" type="submit"
-                            value="Submit">Signer</Button>
-                </CardActions>
-            </form>
+            <CardContent>
+                <Box>
+                    {!signature && !micheline && <TextField
+                        id="standard-basic"
+                        label="Payload"
+                        multiline
+                        fullWidth
+                        value={payload}
+                        onChange={e => setPayload(e.target.value)}/>}
+                    {!signature && micheline && <Typography component="pre">{emitMicheline(micheline, {
+                        indent: "    ",
+                        newline: "\n",
+                    })}</Typography>}
+                    {signature &&
+                    <List>
+                        <ListSubheader>
+                            Signature
+                        </ListSubheader>
+                        <ListItem>
+                            {signature}
+                        </ListItem>
+                    </List>
+                    }
+                </Box>
+            </CardContent>
+            <CardActions>
+                {!micheline && <Button
+                    color="primary"
+                    variant="contained"
+                    type="button"
+                    onClick={handleValidate}
+                >
+                    NEXT
+                </Button>}
+                {!signature && micheline &&
+                <>
+                    <Button color="primary" variant="contained" type="button" onClick={handleReset}
+                            value="Submit">RESET</Button>
+                    <Button color="secondary" variant="contained" type="button" onClick={handleSubmit}
+                            value="Submit">SIGN</Button>
+                </>}
+                {signature && <Button color="primary" variant="contained" type="button" onClick={handleReset}
+                                      value="Submit">RESET</Button>}
+            </CardActions>
         </Card>
     )
 }
