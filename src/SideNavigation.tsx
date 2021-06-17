@@ -1,6 +1,8 @@
 import React from 'react';
 import {List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
-import {AccountCircle} from '@material-ui/icons';
+
+import CreateIcon from '@material-ui/icons/Create';
+import TransitEnterexitIcon from '@material-ui/icons/TransitEnterexit';
 import {Link as RouterLink} from 'react-router-dom';
 
 interface ListItemLinkProps {
@@ -37,7 +39,13 @@ const SideNavigation = () => {
             <ListItemLink
                 to="/signature"
                 primary="Signature"
-                icon={<AccountCircle/>}
+                icon={<CreateIcon/>}
+            />
+
+            <ListItemLink
+                to="/claim"
+                primary="Claim"
+                icon={<TransitEnterexitIcon/>}
             />
 
         </List>

@@ -196,7 +196,6 @@ export default function WalletProvider({
     useEffect(() => {
         wallet.client.getActiveAccount().then((activeAccount) => {
             if (activeAccount) {
-
                 // noinspection JSIgnoredPromiseFromCall
                 reactivate();
             }

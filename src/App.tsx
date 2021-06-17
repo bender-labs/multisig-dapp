@@ -4,6 +4,7 @@ import './App.css';
 import Layout from "./Layout";
 import {Route, Switch, useHistory, useLocation} from "react-router-dom";
 import SignaturePage from "./pages/SignaturePage";
+import ClaimPage from "./pages/ClaimPage";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Layout>
             <Switch>
                 <Route path="/signature"><SignaturePage/></Route>
+                <Route path="/claim"><ClaimPage/></Route>
             </Switch>
         </Layout>
     );
