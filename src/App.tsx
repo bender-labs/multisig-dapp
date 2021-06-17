@@ -1,72 +1,26 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
-import {AppBar, Box, Button, CircularProgress, Container, CssBaseline, Toolbar, Typography} from "@material-ui/core";
-import {useBeacon, UseBeaconState} from './features/wallet/useBeacon';
-import {BeaconProvider, useBeaconClient} from "./runtime/BeaconProvider";
-import WalletInfo from "./features/wallet/WalletInfo";
-import SignatureForm from "./features/wallet/SignatureForm";
 
-function connectWallet(beacon: { state: UseBeaconState; connect: () => Promise<void>; disconnect: () => Promise<void> }) {
-    if (beacon.state.wallet == null)
-        return (
-            <Box>
-                <Button
-                    variant="contained"
-                    onClick={beacon.connect}
-                    disabled={beacon.state.loading}
-                >
-                    Connect wallet
-                </Button>
-                {beacon.state.loading && <CircularProgress/>}
-            </Box>
-        )
-    if (beacon.state.loading) {
-        return (<Button variant="contained" disabled={true}>Loading</Button>)
-    }
-    return (<Button variant="contained" color={"secondary"} onClick={beacon.disconnect}
-                    disabled={beacon.state.loading}>Disconnect</Button>)
-}
+import Layout from "./Layout";
+import {Route, Switch, useHistory, useLocation} from "react-router-dom";
+import SignaturePage from "./pages/SignaturePage";
+
 
 function App() {
-    const dapp = useBeaconClient();
-    const beacon = useBeacon(dapp);
-
+    const location = useLocation();
+    const history = useHistory();
+    useEffect(() => {
+        if (location.pathname === '/') {
+            history.push('/signature')
+        }
+    }, [location, history])
     return (
-        <BeaconProvider>
-            <CssBaseline/>
-            <Container maxWidth="md">
-                <AppBar position="static">
-                    <Toolbar>
-                        <Typography variant="h6">
-                            Simple multisig helper
-                        </Typography>
-                        {connectWallet(beacon)}
-                    </Toolbar>
-                </AppBar>
-                <Box mt={5}>
-                    {beacon.state.wallet &&
-                    <WalletInfo
-                        address={beacon.state.wallet.address}
-                        publicKey={beacon.state.wallet.publicKey}
-                    />
-                    }
-                </Box>
-                <Box mt={5}>
-                    {beacon.state.wallet &&
-                    <>
-                        <SignatureForm
-                            onValidate={v => beacon.validate(v)}
-                            onSubmit={beacon.sign}
-                            onReset={beacon.reset}
-                            micheline={beacon.state.micheline}
-                            signature={beacon.state.signature}
-                        />
-                    </>
-                    }
-                </Box>
 
-            </Container>
-        </BeaconProvider>
+        <Layout>
+            <Switch>
+                <Route path="/signature"><SignaturePage/></Route>
+            </Switch>
+        </Layout>
     );
 }
 
