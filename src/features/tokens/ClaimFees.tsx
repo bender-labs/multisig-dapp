@@ -11,10 +11,10 @@ type ClaimFeesProps = {
 
 export default function ClaimFees({minterContract, tezos, tokens}: ClaimFeesProps) {
     const context = useMinterContract(tezos, minterContract);
-    return <Box>
+    return <Box padding={2}>
         <Typography>Claim fees for {tokens.length} token(s)</Typography>
         {context.status === ActionType.IDLE &&
-        <Button variant={"contained"} onClick={() => context.claim(tokens)}>Claim</Button>}
+        <Button variant={"contained"} color={"primary"} onClick={() => context.claim(tokens)}>Claim</Button>}
         {context.status === ActionType.CLAIMING && <Typography>Claiming...</Typography>}
         {context.status === ActionType.DONE && <Typography>Done : {context.hash}</Typography>}
     </Box>

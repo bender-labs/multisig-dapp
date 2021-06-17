@@ -1,5 +1,5 @@
 import {Token} from "../indexer/types";
-import {Button, Checkbox, List, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
+import {Box, Button, Checkbox, List, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
 import {useCallback, useState} from "react";
 
 type SelectTokensProps = {
@@ -47,8 +47,12 @@ export default function SelectTokens({tokens, onSelect}: SelectTokensProps) {
         </ListItem>
     }
 
-    return <List>
-        <Button onClick={selectAll}>Select all</Button>
-        {tokens.sort((a, b) => a.contract.localeCompare(b.contract)).map(tokenItem)}
-    </List>
+    return <Box padding={2}>
+        <Button onClick={selectAll} variant={"outlined"}>Select all</Button>
+        <List>
+
+            {tokens.sort((a, b) => a.contract.localeCompare(b.contract)).map(tokenItem)}
+        </List>
+    </Box>
+
 }

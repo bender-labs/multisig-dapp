@@ -37,11 +37,9 @@ export const create = (url: string): IndexerApi => {
         baseURL: url
     });
 
-    const configuration = client.get('/configuration');
-
     const fetchTokens = async () => {
 
-        const config: IndexerConfigPayload = await configuration.then(({data}) => data);
+        const config: IndexerConfigPayload = await client.get('/configuration').then(({data}) => data);
         return config.tokens.filter(t => t.type === "ERC20").map(t => ({
             name: t.tezosName,
             decimals: t.decimals,
@@ -51,7 +49,7 @@ export const create = (url: string): IndexerApi => {
     }
 
     const fetchContracts = async () => {
-        const config: IndexerConfigPayload = await configuration.then(({data}) => data);
+        const config: IndexerConfigPayload = await client.get('/configuration').then(({data}) => data);
         return {minter: config.tezosMinterContract, quorum: config.tezosQuorumContract};
     }
 
