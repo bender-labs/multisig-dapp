@@ -1,9 +1,10 @@
 import {Token} from "../indexer/api/types";
 import {Box, Button, Checkbox, List, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
 import {useCallback, useState} from "react";
+import {TokenWithBalance} from "./api/types";
 
 type SelectTokensProps = {
-    tokens: Token[];
+    tokens: Token[] | TokenWithBalance[];
     onSelect: (tokens: Token[]) => void
 }
 
@@ -30,6 +31,10 @@ export default function SelectTokens({tokens, onSelect}: SelectTokensProps) {
         onSelect(tokens);
     }, [tokens, onSelect])
 
+    function hasBalance(t: Token | TokenWithBalance): t is TokenWithBalance {
+        return (t as TokenWithBalance).balance !== undefined;
+    }
+
     const tokenItem = (t: Token) => {
         const labelId = `checkbox-list-label-${t.name}`;
         return <ListItem key={t.name} onClick={handleToggle(t)}>
@@ -42,7 +47,8 @@ export default function SelectTokens({tokens, onSelect}: SelectTokensProps) {
                     inputProps={{'aria-labelledby': labelId}}
                 />
             </ListItemIcon>
-            <ListItemText id={labelId} primary={t.name}/>
+            <ListItemText id={labelId} primary={t.name}
+                          secondary={hasBalance(t) && t.balance.shiftedBy(-t.decimals).toString(10)}/>
 
         </ListItem>
     }

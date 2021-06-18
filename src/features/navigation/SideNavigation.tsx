@@ -3,6 +3,7 @@ import {List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
 
 import CreateIcon from '@material-ui/icons/Create';
 import TransitEnterexitIcon from '@material-ui/icons/TransitEnterexit';
+import MoneyOffIcon from '@material-ui/icons/MoneyOff';
 import {Link as RouterLink} from 'react-router-dom';
 
 interface ListItemLinkProps {
@@ -46,6 +47,11 @@ const SideNavigation = () => {
                 to="/claim"
                 primary="Claim"
                 icon={<TransitEnterexitIcon/>}
+            />
+            <ListItemLink
+                to="/transfer"
+                primary="Transfer"
+                icon={<MoneyOffIcon/>}
             />
 
         </List>

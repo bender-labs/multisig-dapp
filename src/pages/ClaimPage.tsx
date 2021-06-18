@@ -23,7 +23,7 @@ export default function ClaimPage() {
                 <SelectTokens tokens={tokens} onSelect={setTokens}/>
             </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={8}>
             <Paper>
                 {library && contracts && selected.length > 0 &&
                 <ClaimFees tezos={library} tokens={selected} minterContract={contracts.minter}/>}

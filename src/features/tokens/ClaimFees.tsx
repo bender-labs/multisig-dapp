@@ -16,6 +16,14 @@ export default function ClaimFees({minterContract, tezos, tokens}: ClaimFeesProp
         {context.status === ActionType.IDLE &&
         <Button variant={"contained"} color={"primary"} onClick={() => context.claim(tokens)}>Claim</Button>}
         {context.status === ActionType.CLAIMING && <Typography>Claiming...</Typography>}
-        {context.status === ActionType.DONE && <Typography>Done : {context.hash}</Typography>}
+        {context.status === ActionType.OPERATION_SENT &&
+        <Box>
+            <Typography>Operation sent : {context.hash}</Typography>
+            <Typography variant={"subtitle1"}>Waiting for confirmation</Typography>
+        </Box>}
+        {context.status === ActionType.CLAIMING_DONE && <Box>
+            <Typography>Done : {context.hash}</Typography>
+            <Button variant={"outlined"} onClick={context.reset}>OK</Button>
+        </Box>}
     </Box>
 }

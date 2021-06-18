@@ -13,6 +13,7 @@ export interface Config {
         networkName: string;
     };
     indexerApiUrl: string;
+    bcdApiUrl: string;
 }
 
 const env =
@@ -28,5 +29,6 @@ export const initialConfig: Config = {
         networkId: process.env.REACT_APP_TZ_NETWORK_ID! as NetworkType,
         networkName: process.env.REACT_APP_TZ_NETWORK_NAME!,
     },
-    indexerApiUrl: process.env.REACT_APP_INDEXER!
+    indexerApiUrl: process.env.REACT_APP_INDEXER!,
+    bcdApiUrl: process.env.REACT_APP_BCD!
 };

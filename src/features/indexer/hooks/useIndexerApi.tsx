@@ -1,8 +1,8 @@
 import {useConfig} from "../../../runtime/config/ConfigContext";
 
 const useIndexerApi = () => {
-    const config = useConfig();
-    return config.indexerApi;
+    const {indexerApi} = useConfig();
+    return indexerApi;
 }
 
 export default useIndexerApi;

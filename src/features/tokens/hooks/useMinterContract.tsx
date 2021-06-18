@@ -3,9 +3,10 @@ import {Token} from "../../indexer/api/types";
 import {Dispatch, useCallback, useReducer} from "react";
 
 export enum ActionType {
-    CLAIMING,
     IDLE,
-    DONE
+    CLAIMING,
+    OPERATION_SENT,
+    CLAIMING_DONE
 }
 
 type State = {
@@ -17,8 +18,9 @@ type Action =
     | {
     type: ActionType.CLAIMING
 }
+    | { type: ActionType.OPERATION_SENT, payload: string }
     | { type: ActionType.IDLE }
-    | { type: ActionType.DONE, payload: string }
+    | { type: ActionType.CLAIMING_DONE }
 
 const reducer = (state: State, action: Action) => {
     switch (action.type) {
@@ -26,8 +28,10 @@ const reducer = (state: State, action: Action) => {
             return {...state, status: action.type};
         case ActionType.CLAIMING:
             return {status: ActionType.CLAIMING}
-        case ActionType.DONE:
-            return {status: ActionType.DONE, hash: action.payload}
+        case ActionType.OPERATION_SENT:
+            return {status: ActionType.OPERATION_SENT, hash: action.payload}
+        case ActionType.CLAIMING_DONE:
+            return {...state, status: ActionType.CLAIMING_DONE}
     }
 }
 
@@ -46,15 +50,18 @@ const _claim = (dispatch: Dispatch<Action>) => (tezos: TezosToolkit, address: st
     }, tezos.wallet.batch());
 
     const opg: WalletOperation = await batch.send();
+    dispatch({type: ActionType.OPERATION_SENT, payload: opg.opHash})
     await opg.confirmation(1);
-    dispatch({type: ActionType.DONE, payload: opg.opHash})
+    dispatch({type: ActionType.CLAIMING_DONE})
 }
 
+const _reset = (dispatch: Dispatch<Action>) => () => dispatch({type: ActionType.IDLE})
 
 const useMinterContract = (tezos: TezosToolkit, address: string) => {
-    let [state, dispatch] = useReducer(reducer, {status: ActionType.IDLE});
-    let claim = useCallback(_claim(dispatch)(tezos, address), [dispatch, tezos, address]);
-    return {...state, claim};
+    const [state, dispatch] = useReducer(reducer, {status: ActionType.IDLE});
+    const claim = useCallback(_claim(dispatch)(tezos, address), [dispatch, tezos, address]);
+    const reset = useCallback(_reset(dispatch), [dispatch]);
+    return {...state, claim, reset};
 }
 
 export default useMinterContract;
