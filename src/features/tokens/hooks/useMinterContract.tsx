@@ -1,5 +1,5 @@
 import {TezosToolkit, WalletOperation} from "@taquito/taquito";
-import {Token} from "../../indexer/types";
+import {Token} from "../../indexer/api/types";
 import {Dispatch, useCallback, useReducer} from "react";
 
 export enum ActionType {

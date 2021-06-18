@@ -1,5 +1,5 @@
 import {TezosToolkit} from "@taquito/taquito";
-import {Token} from "../indexer/types";
+import {Token} from "../indexer/api/types";
 import useMinterContract, {ActionType} from "./hooks/useMinterContract";
 import {Box, Button, Typography} from "@material-ui/core";
 

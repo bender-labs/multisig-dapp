@@ -1,19 +1,15 @@
 import {Grid, Paper, Typography} from "@material-ui/core";
-import useIndexerApi from "../features/indexer/useIndexerApi";
 import useTokens from "../features/tokens/hooks/useTokens";
 import SelectTokens from "../features/tokens/SelectTokens";
-import {Token} from "../features/indexer/types";
+import {Token} from "../features/indexer/api/types";
 import useTezosContracts from "../features/tokens/hooks/useTezosContracts";
 import {useWalletContext} from "../features/wallet/WalletContext";
 import ClaimFees from "../features/tokens/ClaimFees";
 import {useState} from "react";
 
 export default function ClaimPage() {
-    const api = useIndexerApi();
-
-
-    const {loading, tokens} = useTokens(api);
-    const {contracts} = useTezosContracts(api);
+    const {loading, tokens} = useTokens();
+    const {contracts} = useTezosContracts();
     const {library} = useWalletContext();
 
     const [selected, setTokens] = useState<Token[]>([]);

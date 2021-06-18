@@ -1,8 +1,8 @@
 import React, {PropsWithChildren} from 'react';
 import {Container, Grid, Paper} from '@material-ui/core';
-import TopNavigation from './TopNavigation';
+import TopNavigation from './features/navigation/TopNavigation';
 import {makeStyles} from '@material-ui/core/styles';
-import SideNavigation from './SideNavigation';
+import SideNavigation from './features/navigation/SideNavigation';
 
 const useStyles = makeStyles(() => ({
     container: {

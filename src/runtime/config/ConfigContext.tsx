@@ -1,15 +1,10 @@
-import React, { PropsWithChildren, useState } from 'react';
-import { Config, initialConfig } from './types';
+import React, {PropsWithChildren} from 'react';
+import {Config, initialConfig} from './types';
+import {IndexerApi} from "../../features/indexer/api/types";
+import * as indexer from "../../features/indexer/api/IndexerApi";
 
-type ContextValue = undefined | Config;
-const ConfigContext = React.createContext<ContextValue>(undefined);
-
-export function useTezosConfig() {
-    const config = React.useContext(ConfigContext);
-    if (config == null)
-        throw new Error('config consumer must be used within a config provider');
-    return config.tezos;
-}
+type ContextValue = Config & { indexerApi: IndexerApi };
+const ConfigContext = React.createContext<ContextValue>({} as ContextValue);
 
 export function useConfig() {
     const config = React.useContext(ConfigContext);
@@ -18,10 +13,11 @@ export function useConfig() {
     return config;
 }
 
-export default function Provider({ children }: PropsWithChildren<{}>) {
-    const [config] = useState<ContextValue>(initialConfig);
+const indexerApi = indexer.create(initialConfig.indexerApiUrl);
+
+export default function Provider({children}: PropsWithChildren<{}>) {
 
     return (
-        <ConfigContext.Provider value={config}>{children}</ConfigContext.Provider>
+        <ConfigContext.Provider value={{...initialConfig, indexerApi}}>{children}</ConfigContext.Provider>
     );
 }

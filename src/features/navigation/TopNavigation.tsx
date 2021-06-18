@@ -1,7 +1,7 @@
 import React from 'react';
 import {AppBar, Button, createStyles, Theme, Toolbar, Typography,} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import {TezosConnectionStatus, useWalletContext, WalletContextProps} from "./features/wallet/WalletContext";
+import {TezosConnectionStatus, useWalletContext, WalletContextProps} from "../wallet/WalletContext";
 
 
 const useStyles = makeStyles((theme: Theme) =>

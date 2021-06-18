@@ -1,4 +1,4 @@
-import {Token} from "../indexer/types";
+import {Token} from "../indexer/api/types";
 import {Box, Button, Checkbox, List, ListItem, ListItemIcon, ListItemText} from "@material-ui/core";
 import {useCallback, useState} from "react";
 

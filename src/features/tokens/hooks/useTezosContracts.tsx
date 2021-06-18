@@ -1,13 +1,14 @@
 import {useEffect, useState} from "react";
-import {Contracts, IndexerApi} from "../../indexer/types";
+import {Contracts} from "../../indexer/api/types";
+import useIndexerApi from "../../indexer/hooks/useIndexerApi";
 
 type UseTezosContractsState = {
     contracts?: Contracts,
     loading: boolean
 }
 
-const useTezosContracts = (api: IndexerApi) => {
-
+const useTezosContracts = () => {
+    const api = useIndexerApi();
     const [state, setState] = useState<UseTezosContractsState>({loading: false});
 
     useEffect(() => {

@@ -1,13 +1,14 @@
 import {useEffect, useState} from "react";
-import {IndexerApi, Token} from "../../indexer/types";
+import {Token} from "../../indexer/api/types";
+import useIndexerApi from "../../indexer/hooks/useIndexerApi";
 
 type UseTokensState = {
     tokens: Token[],
     loading: boolean
 }
 
-const useTokens = (api: IndexerApi) => {
-
+const useTokens = () => {
+    const api = useIndexerApi();
     const [state, setState] = useState<UseTokensState>({tokens: [], loading: false});
 
     useEffect(() => {
