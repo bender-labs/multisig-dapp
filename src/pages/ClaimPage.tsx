@@ -7,6 +7,8 @@ import {useWalletContext} from "../features/wallet/WalletContext";
 import ClaimFees from "../features/tokens/ClaimFees";
 import {useState} from "react";
 
+
+
 export default function ClaimPage() {
     const {loading, tokens} = useTokens();
     const {contracts} = useTezosContracts();

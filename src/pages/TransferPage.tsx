@@ -1,12 +1,23 @@
 import {TezosConnectionStatus, useWalletContext} from "../features/wallet/WalletContext";
 import {Box, Button, Grid, Paper, Typography} from "@material-ui/core";
 import SelectTokens from "../features/tokens/SelectTokens";
-import useTokenTransfer from "../features/tokens/hooks/useTokenTransfer";
+import useTokenTransfer, {TransferState} from "../features/tokens/hooks/useTokenTransfer";
 import {TokenWithBalance} from "../features/tokens/api/types";
 import SelectDestination from "../features/tokens/SelectDestination";
+import useTokensWithBalance from "../features/tokens/hooks/useTokensWithBalance";
+import {TezosToolkit} from "@taquito/taquito";
 
-function ConnectedTransferPage({address}: { address: string }) {
-    const {state: {tokens, destination, selectedTokens}, selectTokens, setDestination} = useTokenTransfer(address);
+function ConnectedTransferPage({address, library}: { address: string, library: TezosToolkit }) {
+    const {tokens} = useTokensWithBalance(address);
+    const {
+        selectDestination,
+        selectTokens,
+        transfer,
+        status,
+        hash,
+        destination,
+        reset
+    } = useTokenTransfer(address, library);
 
     return <>
         <Grid item xs={4}>
@@ -17,16 +28,22 @@ function ConnectedTransferPage({address}: { address: string }) {
         <Grid item xs={8}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    {selectedTokens.length > 0 && <Paper>
-                        <SelectDestination value={destination} onSelect={setDestination}/>
-                    </Paper>}
+                    <Paper>
+                        <SelectDestination value={destination} onSelect={selectDestination}/>
+                    </Paper>
                 </Grid>
                 <Grid item xs={12}>
 
-                    {selectedTokens.length > 0 && destination && <Paper>
+                    {status !== TransferState.NOT_READY && <Paper>
                         <Box padding={2}>
-                            <Typography>Send {tokens.length} token(s) to {destination}</Typography>
-                            <Button variant={"outlined"}>Transfer</Button>
+                            <Typography>Send {tokens.length} token(s) from {address} to {destination}</Typography>
+                            {status === TransferState.READY &&
+                            <Button variant={"outlined"} onClick={transfer}>Transfer</Button>}
+                            {status === TransferState.TRANSFERRING && <Typography>Transferring…</Typography>}
+                            {status === TransferState.TRANSFER_DONE && <div>
+                                <Typography>Done {hash}</Typography>
+                                <Button onClick={reset}>Reset</Button>
+                            </div>}
                         </Box>
                     </Paper>}
                 </Grid>
@@ -37,11 +54,12 @@ function ConnectedTransferPage({address}: { address: string }) {
 
 export default function TransferPage() {
 
-    const {status, account} = useWalletContext();
+    const {status, account, library} = useWalletContext();
 
 
     return <Grid container spacing={2}>
         {status !== TezosConnectionStatus.CONNECTED && <Typography>Not connected</Typography>}
-        {status === TezosConnectionStatus.CONNECTED && <ConnectedTransferPage address={account!.address}/>}
+        {status === TezosConnectionStatus.CONNECTED &&
+        <ConnectedTransferPage address={account!.address} library={library!}/>}
     </Grid>
 }

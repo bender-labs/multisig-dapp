@@ -1,4 +1,4 @@
-import React, {Dispatch, PropsWithChildren, useCallback, useEffect, useMemo,} from 'react';
+import React, {Dispatch, PropsWithChildren, useEffect, useMemo,} from 'react';
 
 import {NetworkType, RequestPermissionInput} from '@airgap/beacon-sdk';
 import {TezosToolkit} from '@taquito/taquito';
@@ -180,19 +180,16 @@ export default function WalletProvider({
         status: TezosConnectionStatus.NOT_CONNECTED,
         wallet: wallet
     });
-    let request = {
+    let request = useMemo(() => ({
         network: {
             type: networkId,
             rpcUrl,
         }
-    };
+    }), [networkId, rpcUrl]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const activate = useCallback(_activate(dispatch)(wallet)(request), [request]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const deactivate = useCallback(_deactivate(dispatch)(wallet), []);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const reactivate = useCallback(_reactivate(dispatch)(wallet)(request), [request]);
+    const activate = useMemo(() => _activate(dispatch)(wallet)(request), [request, wallet, dispatch]);
+    const deactivate = useMemo(() => _deactivate(dispatch)(wallet), [wallet, dispatch]);
+    const reactivate = useMemo(() => _reactivate(dispatch)(wallet)(request), [request, wallet, dispatch]);
     useEffect(() => {
         wallet.client.getActiveAccount().then((activeAccount) => {
             if (activeAccount) {

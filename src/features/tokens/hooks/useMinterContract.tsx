@@ -1,6 +1,6 @@
 import {TezosToolkit, WalletOperation} from "@taquito/taquito";
 import {Token} from "../../indexer/api/types";
-import {Dispatch, useCallback, useReducer} from "react";
+import {Dispatch, useMemo, useReducer} from "react";
 
 export enum ActionType {
     IDLE,
@@ -59,8 +59,8 @@ const _reset = (dispatch: Dispatch<Action>) => () => dispatch({type: ActionType.
 
 const useMinterContract = (tezos: TezosToolkit, address: string) => {
     const [state, dispatch] = useReducer(reducer, {status: ActionType.IDLE});
-    const claim = useCallback(_claim(dispatch)(tezos, address), [dispatch, tezos, address]);
-    const reset = useCallback(_reset(dispatch), [dispatch]);
+    const claim = useMemo(() => _claim(dispatch)(tezos, address), [dispatch, tezos, address]);
+    const reset = useMemo(() => _reset(dispatch), [dispatch]);
     return {...state, claim, reset};
 }
 
