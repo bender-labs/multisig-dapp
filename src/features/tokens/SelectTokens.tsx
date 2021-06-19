@@ -5,7 +5,7 @@ import {TokenWithBalance} from "./api/types";
 
 type SelectTokensProps = {
     tokens: Token[] | TokenWithBalance[];
-    onSelect: (tokens: Token[]) => void
+    onSelect: (tokens: Token[] | TokenWithBalance[]) => void
 }
 
 export default function SelectTokens({tokens, onSelect}: SelectTokensProps) {

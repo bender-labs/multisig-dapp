@@ -3,15 +3,18 @@ import {useEffect, useState} from "react";
 import {TokenWithBalance} from "../api/types";
 
 
-const useTokenWithBalances = (address: string) => {
+const useTokenTransfer = (address: string) => {
     const api = useBcdApi();
     const [tokens, setTokens] = useState<TokenWithBalance[]>([]);
+    const [destination, setDestination] = useState<string|undefined>();
+    const [selectedTokens, setSelectedTokens] = useState<TokenWithBalance[]>([])
+
 
     useEffect(() => {
         api.fetchAllBalancesOf(address)
             .then(setTokens);
     }, [api, address]);
-    return {tokens};
+    return {state: {tokens, selectedTokens, destination}, selectTokens: setSelectedTokens, setDestination};
 }
 
-export default useTokenWithBalances;
+export default useTokenTransfer;
