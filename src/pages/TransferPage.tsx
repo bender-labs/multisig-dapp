@@ -8,7 +8,7 @@ import useTokensWithBalance from "../features/tokens/hooks/useTokensWithBalance"
 import {TezosToolkit} from "@taquito/taquito";
 
 function ConnectedTransferPage({address, library}: { address: string, library: TezosToolkit }) {
-    const {tokens} = useTokensWithBalance(address);
+    const {tokens, refresh} = useTokensWithBalance(address, library);
     const {
         selectDestination,
         selectTokens,
@@ -18,6 +18,12 @@ function ConnectedTransferPage({address, library}: { address: string, library: T
         destination,
         reset
     } = useTokenTransfer(address, library);
+
+    const handleTransfer = async () => {
+        await transfer();
+        // noinspection ES6MissingAwait
+        refresh();
+    }
 
     return <>
         <Grid item xs={4}>
@@ -38,7 +44,7 @@ function ConnectedTransferPage({address, library}: { address: string, library: T
                         <Box padding={2}>
                             <Typography>Send {tokens.length} token(s) from {address} to {destination}</Typography>
                             {status === TransferState.READY &&
-                            <Button variant={"outlined"} onClick={transfer}>Transfer</Button>}
+                            <Button variant={"outlined"} onClick={handleTransfer}>Transfer</Button>}
                             {status === TransferState.TRANSFERRING && <Typography>Transferring…</Typography>}
                             {status === TransferState.TRANSFER_DONE && <div>
                                 <Typography>Done {hash}</Typography>
