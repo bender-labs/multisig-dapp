@@ -2,6 +2,7 @@ import {Dispatch, useCallback, useReducer} from "react";
 import {TokenWithBalance} from "../api/types";
 import actionCreatorFactory, {isType} from "typescript-fsa";
 import {TezosToolkit, WalletOperation} from "@taquito/taquito";
+import {Action} from "../../types";
 
 const actionCreator = actionCreatorFactory();
 
@@ -9,10 +10,6 @@ const selectTokens = actionCreator<TokenWithBalance[]>('SELECT_TOKENS')
 const selectDestination = actionCreator<string>('SELECT_DESTINATION')
 const transfer = actionCreator.async<void, string>('TRANSFER')
 const reset = actionCreator('RESET');
-
-export interface Action {
-    type: string;
-}
 
 export enum TransferState {
     NOT_READY,

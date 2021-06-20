@@ -1,35 +1,36 @@
 import {Grid, Paper, Typography} from "@material-ui/core";
 import useTokens from "../features/tokens/hooks/useTokens";
 import SelectTokens from "../features/tokens/SelectTokens";
-import {Token} from "../features/indexer/api/types";
 import useTezosContracts from "../features/tokens/hooks/useTezosContracts";
-import {useWalletContext} from "../features/wallet/WalletContext";
+import {TezosConnectionStatus, useWalletContext} from "../features/wallet/WalletContext";
 import ClaimFees from "../features/tokens/ClaimFees";
-import {useState} from "react";
+import useTokenClaim from "../features/tokens/hooks/useTokenClaim";
+import {TezosToolkit} from "@taquito/taquito";
 
+function ConnectedClaimPage({address, tezos}: { tezos: TezosToolkit, address: string }) {
+    const {claim, reset, tokens, hash, selectTokens, status} = useTokenClaim(tezos, address);
+    const {loading, tokens: availableTokens} = useTokens();
+    return <><Grid item xs={4}>
+        <Paper>
+            {loading && <Typography>Loading...</Typography>}
 
-
-export default function ClaimPage() {
-    const {loading, tokens} = useTokens();
-    const {contracts} = useTezosContracts();
-    const {library} = useWalletContext();
-
-    const [selected, setTokens] = useState<Token[]>([]);
-
-
-    return <Grid container spacing={2}>
-        <Grid item xs={4}>
-            <Paper>
-                {loading && <Typography>Loading...</Typography>}
-
-                <SelectTokens tokens={tokens} onSelect={setTokens}/>
-            </Paper>
-        </Grid>
+            <SelectTokens tokens={availableTokens} onSelect={selectTokens}/>
+        </Paper>
+    </Grid>
         <Grid item xs={8}>
             <Paper>
-                {library && contracts && selected.length > 0 &&
-                <ClaimFees tezos={library} tokens={selected} minterContract={contracts.minter}/>}
+                <ClaimFees status={status} tokens={tokens} hash={hash} onConfirm={claim} onReset={reset}/>
             </Paper>
-        </Grid>
+        </Grid></>
+}
+
+export default function ClaimPage() {
+    const {contracts} = useTezosContracts();
+    const {library, status} = useWalletContext();
+
+    return <Grid container spacing={2}>
+        {status !== TezosConnectionStatus.CONNECTED && <Typography>Not connected</Typography>}
+        {status === TezosConnectionStatus.CONNECTED && contracts?.minter &&
+        <ConnectedClaimPage tezos={library!} address={contracts.minter}/>}
     </Grid>
 }
